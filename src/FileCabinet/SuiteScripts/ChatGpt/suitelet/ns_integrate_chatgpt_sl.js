@@ -30,7 +30,8 @@ define(['N/ui/serverWidget', 'N/https'], function (serverWidget, https) {
 			log.debug('context',context);
 			// Get the user input from the form submission
 			var userInput = context.request.parameters.custpage_query_text;
-
+			
+			TODO:
 			// Make a backend request to the OpenAI API to convert the text
 			// into a SuiteQL query (actual API integration code needed here)
 
