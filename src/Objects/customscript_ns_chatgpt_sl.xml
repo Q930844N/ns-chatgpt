@@ -1,0 +1,25 @@
+<suitelet scriptid="customscript_ns_chatgpt_sl">
+  <description></description>
+  <isinactive>F</isinactive>
+  <name>NS with ChatGPT</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/ChatGpt/suitelet/ns_integrate_chatgpt_sl.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_ns_chatgpt_sl">
+      <allemployees>T</allemployees>
+      <allpartners>T</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>F</isonline>
+      <loglevel>DEBUG</loglevel>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>RELEASED</status>
+      <title>NS with ChatGPT</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>
