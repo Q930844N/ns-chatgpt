@@ -2,10 +2,17 @@
 * @NApiVersion 2.1
 * @NScriptType Suitelet
 * @NModuleScope Public
+* 
+* Author: Abdul Qadeer with the help og ChatGPT.
 */
 
-define(['N/ui/serverWidget', 'N/https'], function (serverWidget, https) {
+define(['N/ui/serverWidget', 'N/https', 'N/url', 'N/redirect'], function (serverWidget, https, url, redirect) {
 	function onRequest(context) {
+		log.debug('context', context);
+		// Get the user input from the form submission
+		var userInput = context.request.parameters?.custpage_query_text;
+		log.debug('userInput', userInput);
+
 		if (context.request.method === 'GET') {
 			// Create the Suitelet form
 			var form = serverWidget.createForm({
@@ -18,6 +25,14 @@ define(['N/ui/serverWidget', 'N/https'], function (serverWidget, https) {
 				label: 'Enter Text',
 				type: serverWidget.FieldType.TEXTAREA,
 			});
+			if (userInput) {
+				var convertedQuery = getConvertedQueryFromOpenAI(userInput);
+				form.addField({
+					id: 'custpage_query_results',
+					label: 'Converted Query:',
+					type: serverWidget.FieldType.INLINEHTML,
+				}).defaultValue = '<pre>' + convertedQuery + '</pre>';
+			}
 
 			// Add a submit button
 			form.addSubmitButton({
@@ -27,30 +42,14 @@ define(['N/ui/serverWidget', 'N/https'], function (serverWidget, https) {
 			// Display the form
 			context.response.writePage(form);
 		} else if (context.request.method === 'POST') {
-			log.debug('context',context);
-			// Get the user input from the form submission
-			var userInput = context.request.parameters.custpage_query_text;
-			
-			TODO:
-			// Make a backend request to the OpenAI API to convert the text
-			// into a SuiteQL query (actual API integration code needed here)
+			log.debug('context', context);
 
-			var convertedQuery = getConvertedQueryFromOpenAI(userInput);
-			// var convertedQuery = sendChatGPTRequest(userInput);
-
-
-			// Display the result
-			var form = serverWidget.createForm({
-				title: 'Converted Query Result',
+			var suiteletURL = url.resolveScript({
+				scriptId: 'customscript_ns_chatgpt_sl',
+				deploymentId: 'customdeploy_ns_chatgpt_sl',
+				params: {custpage_query_text : context.request.parameters.custpage_query_text}
 			});
-
-			form.addField({
-				id: 'custpage_query_results',
-				label: 'Converted Query:',
-				type: serverWidget.FieldType.INLINEHTML,
-			}).defaultValue = '<pre>' + convertedQuery + '</pre>';
-
-			context.response.writePage(form);
+			redirect.redirect({ url: suiteletURL });
 		}
 	}
 
@@ -58,8 +57,8 @@ define(['N/ui/serverWidget', 'N/https'], function (serverWidget, https) {
 	function getConvertedQueryFromOpenAI(text) {
 		// Call the OpenAI API with the input text and obtain the converted query
 		// (Replace the following with actual API integration code)
-		var apiUrl = 'https://api.openai.com/v1/chat/completions'; 
-		var apiKey = 'PLACE_KEY_HERE'; // Replace with your OpenAI API key
+		var apiUrl = 'https://api.openai.com/v1/chat/completions';
+		var apiKey = 'PLACE_YOUR_API_KEY_HERE'; // Replace with your OpenAI API key
 		var headers = {
 			'Authorization': 'Bearer ' + apiKey,
 			'Content-Type': 'application/json',
@@ -81,12 +80,6 @@ define(['N/ui/serverWidget', 'N/https'], function (serverWidget, https) {
 		} catch (error) {
 			response = error;
 		}
-
-
-		// Parse the API response and return the converted query
-		//   var responseBody = JSON.parse(response);
-		//   var convertedQuery = responseBody.converted_query;
-		log.debug('response',response);
 		return response.body;
 	}
 
